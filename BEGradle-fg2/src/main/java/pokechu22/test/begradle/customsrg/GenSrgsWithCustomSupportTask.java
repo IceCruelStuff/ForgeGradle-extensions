@@ -152,14 +152,17 @@ public class GenSrgsWithCustomSupportTask extends GenSrgs {
 			getLogger().warn("Did not copy settings for custom SRG task; this is needed for the task to do anything.");
 		}
 
-		// Begin quote from original
+		// Begin modified quote from original
         // csv data.  SRG -> MCP
         Map<String, String> methods = new HashMap<>();
         Map<String, String> fields = new HashMap<>();
         readCSVs(getMethodsCsv(), getFieldsCsv(), methods, fields);
 
         // Do SRG stuff
-        SrgContainer extraSrg = new SrgContainer().readSrgs(getExtraSrgs());
+        SrgContainer extraSrg = new SrgContainer();
+		for (File file : getExtraSrgs()) {
+			extraSrg.readSrg(file);
+		}
         SrgContainer inSrg = new SrgContainer().readSrg(getInSrg());
         SrgContainer newSrg = ExtraSrgUtil.remapSrg(inSrg, extraSrg);
         writeOutSrgs(newSrg, methods, fields);
@@ -275,7 +278,10 @@ public class GenSrgsWithCustomSupportTask extends GenSrgs {
 		// We need to reverse the list to reverse priorities; thus, duplicate entries
 		// are handled in the opposite order.  Well, technically that behavior may be
 		// undefined, but it seems better to do this.
-		SrgContainer srg = new SrgContainer().readSrgs(extraSrgs);
+		SrgContainer srg = new SrgContainer();
+		for (File file : extraSrgs) {
+			srg.readSrg(file);
+		}
 
 		// We don't need to reverse the _order_ of the entries since a map can only
 		// have one key; thus it doesn't matter.  But we _do_ need to reverse the order

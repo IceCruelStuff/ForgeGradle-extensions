@@ -32,7 +32,7 @@ dependencies {
 	testCompile 'junit:junit:4.12'
 	testCompile 'org.hamcrest:hamcrest-library:1.3'
 
-	compileOnly 'net.minecraftforge:Srg2Source:4.2.7'
+	compileOnly 'net.minecraftforge:Srg2Source:5.0.+'
 
 	// Put FG below so that dependencies are prioritized (source attachment)
 	// FG is compileOnly so that the generated dependencies list doesn't

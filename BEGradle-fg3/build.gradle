@@ -37,7 +37,7 @@ dependencies {
 	// Put FG below so that dependencies are prioritized (source attachment)
 	// FG is compileOnly so that the generated dependencies list doesn't
 	// tell it to use the newest version.
-	compileOnly 'net.minecraftforge.gradle:ForgeGradle:3.0.130'
+	compileOnly 'net.minecraftforge.gradle:ForgeGradle:3.0.154'
 }
 
 jar {

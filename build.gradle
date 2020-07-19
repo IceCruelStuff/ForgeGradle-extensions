@@ -16,7 +16,7 @@ buildscript {
 }
 
 subprojects {
-	if (project.name != 'share') {
+	if (project.name.contains("BEGradle")) {
 		task regenEclipse {
 			// Delete the eclipse classpath and project and then recreate it, without doing any of the slower bits.
 			dependsOn 'cleanEclipseProject'
@@ -35,7 +35,7 @@ subprojects {
 		apply plugin: 'maven'
 
 		group = 'pokechu22.test.begradle'
-		version = '0.2.3-SNAPSHOT'
+		version = '0.2.5'
 		archivesBaseName = 'begradle'
 		targetCompatibility = '1.8'
 		sourceCompatibility = '1.8'

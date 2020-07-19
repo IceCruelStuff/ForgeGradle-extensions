@@ -294,12 +294,12 @@ public class BaseEditPlugin extends
 			if (project.getGradle().getStartParameter().isOffline()) {
 				// In offline mode, don't even try the internet; always
 				// return the cached version.
-				return Files.toString(cache, Charsets.UTF_8);
+				return Files.asCharSource(cache, Charsets.UTF_8).read();
 			}
 
 			String etag;
 			if (etagFile.exists()) {
-				etag = Files.toString(etagFile, Charsets.UTF_8);
+				etag = Files.asCharSource(etagFile, Charsets.UTF_8).read();
 			} else {
 				etagFile.getParentFile().mkdirs();
 				etag = "";
@@ -321,7 +321,7 @@ public class BaseEditPlugin extends
 			String out = null;
 			if (con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
 				// 304 Not Modified - use the etag'd version
-				out = Files.toString(cache, Charsets.UTF_8);
+				out = Files.asCharSource(cache, Charsets.UTF_8).read();
 			} else if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				// 200 OK
 				InputStream stream = con.getInputStream();
@@ -332,7 +332,7 @@ public class BaseEditPlugin extends
 				// Write the etag, if present
 				etag = con.getHeaderField("ETag");
 				if (!Strings.isNullOrEmpty(etag)) {
-					Files.write(etag, etagFile, Charsets.UTF_8);
+					Files.asCharSink(etagFile, Charsets.UTF_8).write(etag);
 				}
 
 				out = new String(data);
@@ -351,7 +351,7 @@ public class BaseEditPlugin extends
 
 		if (cache.exists()) {
 			try {
-				return Files.toString(cache, Charsets.UTF_8);
+				return Files.asCharSource(cache, Charsets.UTF_8).read();
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}

@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
@@ -30,7 +29,7 @@ import com.google.common.collect.ImmutableMap;
 
 import net.minecraftforge.gradle.common.task.ExtractMCPData;
 import net.minecraftforge.gradle.common.util.MavenArtifactDownloader;
-import net.minecraftforge.gradle.patcher.task.TaskCreateSrg;
+import net.minecraftforge.gradle.mcp.task.GenerateSRG;
 import net.minecraftforge.gradle.userdev.UserDevExtension;
 import net.minecraftforge.gradle.userdev.UserDevPlugin;
 import net.minecraftforge.gradle.userdev.tasks.RenameJarInPlace;
@@ -93,25 +92,16 @@ public class BaseEditPlugin extends UserDevPlugin {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		TaskProvider<ExtractMCPData> extractSrg = (TaskProvider)project.getTasks().named("extractSrg");
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		TaskProvider<TaskCreateSrg> createMcpToSrg = (TaskProvider)project.getTasks().named("createMcpToSrg");
-		TaskProvider<TaskCreateSrg> createMcpToNotch = project.getTasks().register("createMcpToNotch", TaskCreateSrg.class);
+		TaskProvider<GenerateSRG> createMcpToSrg = (TaskProvider)project.getTasks().named("createMcpToSrg");
+		TaskProvider<GenerateSRG> createMcpToNotch = project.getTasks().register("createMcpToNotch", GenerateSRG.class);
 		TaskProvider<Task> setupDecompProvider = tasks.register("setupDecompWorkspace");
 
 		createMcpToNotch.configure(task -> {
 			task.dependsOn(extractSrg);
-			task.toNotch();
+			task.setNotch(true);
+			task.setReverse(true);
 			task.setSrg(extractSrg.get().getOutput());
-			// per GenerateSRG.findNames
-			String mapping = extension.getMappings();
-			int idx = mapping.lastIndexOf('_');
-			if (idx == -1) {
-				throw new InvalidUserDataException("Bad mappings name " + mapping);
-			}
-			String channel = mapping.substring(0, idx);
-			String version = mapping.substring(idx + 1);
-			String desc = "de.oceanlabs.mcp:mcp_" + channel + ":" + version + "@zip";
-			File mappingsFile = MavenArtifactDownloader.manual(project, desc, false);
-			task.setMappings(mappingsFile);
+			task.setMappings(extension.getMappings());
 		});
 		setupDecompProvider.configure(task -> {
 			task.doFirst(t -> {

@@ -6,3 +6,7 @@ Extension to [ForgeGradle](http://github.com/MinecraftForge/ForgeGradle) that pr
 Additionally, it provides the ability to add secondary SRGs.
 
 **NOTE**: This is currently in an experimental phase.  The layout, behavior, and even name of the plugin has not been finalized.
+
+---------
+
+This repository also includes a tweaked version of Sponge's [LaunchWrapperTestSuite](https://github.com/SpongePowered/LaunchWrapperTestSuite), from [this pull request](https://github.com/SpongePowered/LaunchWrapperTestSuite/pull/3).

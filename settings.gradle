@@ -1,3 +1,4 @@
 include 'share'
 include 'BEGradle-fg2'
 include 'BEGradle-fg3'
+include 'LaunchWrapperTestSuite'

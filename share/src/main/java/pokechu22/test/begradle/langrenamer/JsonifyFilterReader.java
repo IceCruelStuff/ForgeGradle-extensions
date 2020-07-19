@@ -4,9 +4,9 @@ import java.io.FilterReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,12 +27,30 @@ public class JsonifyFilterReader extends FilterReader {
 		return new StringReader(json);
 	}
 
+	// These should maybe be configurable, but there isn't a good way of getting
+	// that information to here. (Gradle doesn't let you use a custom constructor
+	// when using a FilterReader)
+	private static final String CONVERSION_NOTE_KEY = "__conversionNote";
+	private static final String CONVERSION_NOTE = "!!! THIS IS A GENERATED FILE !!! "
+			+ "If you plan on editing it, use the original .lang file instead. "
+			+ "It can be found on GitHub, or in version 1.12.2 and earlier. "
+			+ "These json lang files lack comments and have a random order, "
+			+ "so the older format is used as the base and these are generated.";
+	
 	private static Map<String, String> getTranslations(Reader in) throws IOException {
 		Properties properties = new Properties();
 		properties.load(in);
-		return properties.entrySet().stream()
-				.collect(Collectors.toMap(
-						entry -> (String)entry.getKey(),
-						entry -> ((String)entry.getValue()).replaceAll("\n", "\\\\n")));
+		Map<String, String> result = new LinkedHashMap<>();
+		// Put this first (we have control over that, even though the order of the
+		// Properties is messed up and out of our control)
+		result.put(CONVERSION_NOTE_KEY, CONVERSION_NOTE);
+		// Properties is a HashTable, and it can be contaminated with non-string things
+		// because it was designed poorly :|
+		for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+			String key = (String)entry.getKey();
+			String value = ((String)entry.getValue()).replaceAll("\n", "\\\\n");
+			result.put(key, value);
+		}
+		return result;
 	}
 }
